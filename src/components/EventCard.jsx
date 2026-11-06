@@ -25,9 +25,12 @@ function EventCard({ event }) {
         </div>
         <div className="event-card__body">
           <h3 className="event-card__title">{title}</h3>
-          <p className="event-card__period">
-            {formatYmd(eventstartdate)} ~ {formatYmd(eventenddate)}
-          </p>
+          {/* 기간은 축제·행사(contentTypeId 15)에만 있음 */}
+          {eventstartdate && (
+            <p className="event-card__period">
+              {formatYmd(eventstartdate)} ~ {formatYmd(eventenddate)}
+            </p>
+          )}
           <p className="event-card__addr">{address || '주소 정보 없음'}</p>
         </div>
       </article>

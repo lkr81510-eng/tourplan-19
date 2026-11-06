@@ -136,6 +136,67 @@ export async function getFestivals({
   )
 }
 
+/** 'YYYYMMDD' ↔ 'YYYY-MM-DD' (input type="date" 값) */
+export function ymdToInput(ymd) {
+  return ymd && ymd.length === 8 ? `${ymd.slice(0, 4)}-${ymd.slice(4, 6)}-${ymd.slice(6, 8)}` : ''
+}
+export function inputToYmd(value) {
+  return value ? value.replaceAll('-', '') : ''
+}
+
+/** 관광타입(contentTypeId) — 공식 문서 코드표 기준 */
+export const FESTIVAL_TYPE_ID = '15'
+export const THEMES = [
+  { id: FESTIVAL_TYPE_ID, label: '축제·행사', icon: '🎪' },
+  { id: '12', label: '관광지', icon: '🏞️' },
+  { id: '14', label: '문화시설', icon: '🏛️' },
+  { id: '28', label: '레포츠', icon: '🚴' },
+  { id: '32', label: '숙박', icon: '🏨' },
+  { id: '39', label: '음식점', icon: '🍜' },
+]
+
+/**
+ * 지역기반 관광정보 목록 (지역기반 관광정보조회 areaBasedList2)
+ *
+ * @param {object} options
+ * @param {string} options.contentTypeId 관광타입 ID (12 관광지, 14 문화시설, 28 레포츠, 32 숙박, 39 음식점 …)
+ * @param {string} [options.region] 법정동 시도코드(lDongRegnCd), 빈 값이면 전국
+ * @param {number} [options.numOfRows]
+ * @param {number} [options.pageNo]
+ * @param {AbortSignal} [options.signal]
+ */
+export async function getAreaBasedList({
+  contentTypeId,
+  region = '',
+  numOfRows = 12,
+  pageNo = 1,
+  signal,
+} = {}) {
+  return request(
+    'areaBasedList2',
+    {
+      contentTypeId,
+      lDongRegnCd: region,
+      arrange: 'Q', // 대표이미지 있는 항목만, 수정일순
+      numOfRows,
+      pageNo,
+    },
+    { signal },
+  )
+}
+
+/**
+ * 테마에 맞는 목록 조회
+ * - 축제·행사: 선택한 날짜에 진행 중인 행사 (searchFestival2)
+ * - 그 외: 선택한 지역의 관광타입별 목록 (areaBasedList2)
+ */
+export async function getPlaces({ theme = FESTIVAL_TYPE_ID, date, region, numOfRows, pageNo, signal }) {
+  if (theme === FESTIVAL_TYPE_ID) {
+    return getFestivals({ date, region, numOfRows, pageNo, signal })
+  }
+  return getAreaBasedList({ contentTypeId: theme, region, numOfRows, pageNo, signal })
+}
+
 /**
  * 지역코드 조회 (법정동코드조회 ldongCode2)
  * - regionCode 없이 호출: 시도 목록

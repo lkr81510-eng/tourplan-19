@@ -4,8 +4,44 @@
   padding: 32px 24px 64px;
 }
 
+.home__filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
 .home__heading {
   margin-bottom: 20px;
+}
+
+.home__more {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.home__more-button {
+  min-width: 200px;
+  padding: 12px 28px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.home__more-button:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+.home__more-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .home__heading h2 {

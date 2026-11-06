@@ -1,0 +1,88 @@
+.event-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.event-card__thumb {
+  aspect-ratio: 4 / 3;
+  background: var(--muted-bg);
+}
+
+.event-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.event-card__no-image {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-sub);
+  font-size: 14px;
+}
+
+.event-card__no-image span {
+  font-size: 40px;
+}
+
+.event-card__no-image p {
+  margin: 0;
+}
+
+.event-card__body {
+  padding: 14px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-card__title {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.event-card__period {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.event-card__addr {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.4;
+}
+
+/* 카드 전체가 링크 */
+a.event-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.event-card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}

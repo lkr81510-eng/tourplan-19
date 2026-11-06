@@ -1,0 +1,101 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0; /* 좁은 화면에서 로고 글자가 말줄임 되도록 */
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.header__logo-icon {
+  flex-shrink: 0;
+  font-size: 24px;
+}
+
+.header__logo-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header__nav {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0; /* 메뉴는 절대 줄바꿈·축소되지 않음 */
+}
+
+.header__link {
+  padding: 8px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--text-sub);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.header__link:hover {
+  color: var(--text);
+  background: var(--muted-bg);
+}
+
+.header__link--active,
+.header__link--active:hover {
+  color: #fff;
+  background: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .header__inner {
+    padding: 0 16px;
+    height: 56px;
+    gap: 10px;
+  }
+
+  .header__logo {
+    font-size: 17px;
+  }
+
+  .header__logo-icon {
+    font-size: 21px;
+  }
+
+  .header__link {
+    padding: 6px 11px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header__logo {
+    font-size: 15px;
+  }
+
+  .header__link {
+    padding: 6px 9px;
+    font-size: 13px;
+  }
+}

@@ -1,12 +1,15 @@
 import { Link, NavLink } from 'react-router-dom'
+import { useFavorites } from '../hooks/useFavorites'
 import './Header.css'
 
 const MENUS = [
   { to: '/', label: '홈', end: true },
-  { to: '/favorites', label: '관심 여행지' },
+  { to: '/favorites', label: '관심 여행지', showCount: true },
 ]
 
 function Header() {
+  const { count } = useFavorites()
+
   return (
     <header className="header">
       <div className="header__inner">
@@ -16,7 +19,7 @@ function Header() {
         </Link>
 
         <nav className="header__nav" aria-label="주요 메뉴">
-          {MENUS.map(({ to, label, end }) => (
+          {MENUS.map(({ to, label, end, showCount }) => (
             <NavLink
               key={to}
               to={to}
@@ -26,6 +29,11 @@ function Header() {
               }
             >
               {label}
+              {showCount && count > 0 && (
+                <span className="header__badge" aria-label={`${count}개 저장됨`}>
+                  {count > 99 ? '99+' : count}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

@@ -1,0 +1,37 @@
+.ai-course {
+  margin-top: 40px;
+  padding: 24px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+}
+
+.ai-course__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-course__icon {
+  font-size: 22px;
+}
+
+.ai-course h2 {
+  margin: 0;
+  font-size: 19px;
+  color: var(--text);
+}
+
+.ai-course__placeholder {
+  margin: 0;
+  color: var(--text-sub);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .ai-course {
+    margin-top: 32px;
+    padding: 18px;
+  }
+}

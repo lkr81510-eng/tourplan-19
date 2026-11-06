@@ -8,6 +8,7 @@
   --accent: #2f7de1;
   --error: #d14343;
   --shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+  --heart: #f0445b;
 
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
   line-height: 1.5;
@@ -27,6 +28,7 @@
     --accent: #5b9dff;
     --error: #ff7b7b;
     --shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+    --heart: #ff6b7f;
   }
 }
 

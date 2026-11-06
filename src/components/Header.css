@@ -57,6 +57,30 @@
   transition: background 0.2s, color 0.2s;
 }
 
+.header__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.header__badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--heart);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.header__link--active .header__badge {
+  background: #fff;
+  color: var(--accent);
+}
+
 .header__link:hover {
   color: var(--text);
   background: var(--muted-bg);

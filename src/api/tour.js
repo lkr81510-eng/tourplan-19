@@ -79,6 +79,11 @@ async function request(operation, params = {}, { signal } = {}) {
     throw errorFor('PARSE')
   }
 
+  // 파라미터 오류 등은 { resultCode: '10', resultMsg: '...' } 처럼 response 없이 오기도 함
+  if (!data?.response && data?.resultCode) {
+    throw errorFor(data.resultCode, `관광정보 요청 오류 (${data.resultCode})`)
+  }
+
   const header = data?.response?.header
   if (header?.resultCode !== '0000') {
     throw errorFor(header?.resultCode ?? 'PARSE', header?.resultMsg)
@@ -195,6 +200,44 @@ export async function getPlaces({ theme = FESTIVAL_TYPE_ID, date, region, numOfR
     return getFestivals({ date, region, numOfRows, pageNo, signal })
   }
   return getAreaBasedList({ contentTypeId: theme, region, numOfRows, pageNo, signal })
+}
+
+/**
+ * 공통정보 조회 (detailCommon2) — 필수: contentId
+ * @returns {Promise<object|null>} 없으면 null
+ */
+export async function getDetailCommon(contentId, { signal } = {}) {
+  const { items } = await request('detailCommon2', { contentId }, { signal })
+  return items[0] ?? null
+}
+
+/**
+ * 소개정보 조회 (detailIntro2) — 필수: contentId, contentTypeId
+ * @returns {Promise<object|null>} 없으면 null
+ */
+export async function getDetailIntro(contentId, contentTypeId, { signal } = {}) {
+  const { items } = await request('detailIntro2', { contentId, contentTypeId }, { signal })
+  return items[0] ?? null
+}
+
+/**
+ * 상세 페이지용: 공통정보 + (행사라면) 소개정보
+ * 소개정보 조회가 실패해도 공통정보는 보여줄 수 있도록 intro 는 null 로 둡니다.
+ * @returns {Promise<{ common: object, intro: object|null } | null>} 콘텐츠가 없으면 null
+ */
+export async function getPlaceDetail(contentId, { signal } = {}) {
+  const common = await getDetailCommon(contentId, { signal })
+  if (!common) return null
+
+  let intro = null
+  if (common.contenttypeid === FESTIVAL_TYPE_ID) {
+    try {
+      intro = await getDetailIntro(contentId, common.contenttypeid, { signal })
+    } catch (err) {
+      if (err.name === 'AbortError') throw err
+    }
+  }
+  return { common, intro }
 }
 
 /**

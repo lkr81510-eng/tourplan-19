@@ -202,6 +202,81 @@ export async function getPlaces({ theme = FESTIVAL_TYPE_ID, date, region, numOfR
   return getAreaBasedList({ contentTypeId: theme, region, numOfRows, pageNo, signal })
 }
 
+/** AI 코스 후보로 쓸 관광타입 (섞는 순서) — 축제(15)·숙박(32)·여행코스(25)는 제외 */
+export const NEARBY_TYPES = [
+  { id: '12', label: '관광지' },
+  { id: '39', label: '음식점' },
+  { id: '14', label: '문화시설' },
+  { id: '28', label: '레포츠' },
+  { id: '38', label: '쇼핑' },
+]
+
+const clip = (text, max = 200) => String(text ?? '').trim().slice(0, max)
+
+/**
+ * 중심 좌표 주변 후보 장소 (위치기반 관광정보조회 locationBasedList2)
+ * 관광타입별로 따로 조회한 뒤 가까운 순으로 한 개씩 번갈아 섞어 최대 limit 개를 돌려줍니다.
+ *
+ * @param {object} options
+ * @param {number} options.mapx 경도
+ * @param {number} options.mapy 위도
+ * @param {string} [options.excludeId] 제외할 contentid (중심 장소)
+ * @param {number} [options.radius] 반경(m), 기본 10km
+ * @param {number} [options.limit]  최대 개수, 기본 15
+ * @returns {Promise<{ contentid: string, title: string, address: string, type: string, distance: number|null }[]>}
+ */
+export async function getNearbyCandidates({ mapx, mapy, excludeId, radius = 10000, limit = 15, signal }) {
+  const perType = Math.ceil(limit / NEARBY_TYPES.length) + 4 // 한 타입이 부족해도 다른 타입으로 채울 여유
+
+  const results = await Promise.allSettled(
+    NEARBY_TYPES.map(({ id }) =>
+      request(
+        'locationBasedList2',
+        {
+          mapX: mapx,
+          mapY: mapy,
+          radius,
+          contentTypeId: id,
+          arrange: 'E', // 거리순
+          numOfRows: perType,
+          pageNo: 1,
+        },
+        { signal },
+      ),
+    ),
+  )
+
+  // 전부 실패했으면 첫 번째 오류를 그대로 전달
+  if (results.every((r) => r.status === 'rejected')) throw results[0].reason
+  signal?.throwIfAborted()
+
+  const lists = results.map((r, i) =>
+    r.status === 'fulfilled'
+      ? r.value.items.map((it) => ({
+          contentid: String(it.contentid),
+          title: clip(it.title),
+          address: clip([it.addr1, it.addr2].filter(Boolean).join(' ')),
+          type: NEARBY_TYPES[i].label,
+          distance: Number.isFinite(Number(it.dist)) ? Math.round(Number(it.dist)) : null,
+        }))
+      : [],
+  )
+
+  // 라운드 로빈으로 섞기 (중복·중심 장소 제외)
+  const picked = []
+  const seen = new Set(excludeId ? [String(excludeId)] : [])
+  for (let round = 0; picked.length < limit && lists.some((l) => l.length > round); round++) {
+    for (const list of lists) {
+      const item = list[round]
+      if (!item || !item.title || seen.has(item.contentid)) continue
+      seen.add(item.contentid)
+      picked.push(item)
+      if (picked.length >= limit) break
+    }
+  }
+  return picked
+}
+
 /**
  * 공통정보 조회 (detailCommon2) — 필수: contentId
  * @returns {Promise<object|null>} 없으면 null

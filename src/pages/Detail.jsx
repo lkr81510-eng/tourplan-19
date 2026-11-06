@@ -251,8 +251,8 @@ function Detail() {
         )}
       </article>
 
-      {/* 나중에 AI 결과가 들어갈 자리 — 정리된 상세 정보를 그대로 전달 */}
-      <AiCourseSection place={place} />
+      {/* AI 코스 추천 — key 로 장소가 바뀌면(코스 링크로 이동 등) 선택·결과 초기화 */}
+      <AiCourseSection key={place.contentid} place={place} />
     </div>
   )
 }
